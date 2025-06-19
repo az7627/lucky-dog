@@ -9,7 +9,7 @@ import hashlib
 import logging
 import colorlog  # 确保已安装colorlog库
 
-TOGGLE_NAME_LIST_HASH: str = '3d8b862ff90a04560429bded05c15cfa962578b2e536bca899e490773e925905'
+TOGGLE_NAME_LIST_HASH: str = '1017e1cc7f415846e2a764733e2c7bcfdfa2f5e2074b82e951a80ea15959c541'
 
 # 配置彩色日志
 colorlog.basicConfig(
