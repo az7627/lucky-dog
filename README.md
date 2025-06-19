@@ -23,7 +23,7 @@
 > pip install colorlog
 > ```
 > 
-> 若使用以上命令下载过慢，可配置镜像源，然后再安装软件包。
+> 若使用以上命令下载过慢，对于中国用户，可配置镜像源，然后再安装软件包。
 > 
 > ```
 > pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
@@ -44,14 +44,14 @@
 
 2. 运行 `get_name_list_hash.py`，根据提示获取名单的哈希值并替换掉 `gui-zh.py` 中的 `TOGGLE_NAME_LIST_HASH` 常量。运行该脚本后，输出大致如下所示。其中 `[Y/n]` 代表要求你输入 `Y`（不区分大小写）表示同意，或输入 `N`（不区分大小写）表示拒绝。如果不输入任何内容则等同于输入默认值 `Y`。同理可得，`[y/N]` 表示不输入则默认为 `N`
 
-```
-计算出的哈希值: 1017e1cc7f415846e2a764733e2c7bcfdfa2f5e2074b82e951a80ea15959c541
-同时更改 gui-zh.py 中的哈希值? [Y/n] 
-成功更新 gui-zh.py 中的哈希值。
-是否编译 gui-zh.py? [Y/n]      
-编译成功，生成 gui-zh.pyc
-是否删除源文件 gui-zh.py? [y/N]
-```
+    ```
+    计算出的哈希值: 1017e1cc7f415846e2a764733e2c7bcfdfa2f5e2074b82e951a80ea15959c541
+    同时更改 gui-zh.py 中的哈希值? [Y/n] 
+    成功更新 gui-zh.py 中的哈希值。
+    是否编译 gui-zh.py? [Y/n]      
+    编译成功，生成 gui-zh.pyc
+    是否删除源文件 gui-zh.py? [y/N]
+    ```
 
 > [!NOTE]
 > 
@@ -89,7 +89,7 @@
 
 > [!TIP]
 > 
-> 运行 `.pyc` 仍需要 Python 环境，仍需要安装相应的依赖（`colorlog`）。需注意，生产环境（班级电脑）的 Python 版本需要和在开发环境编译时所用的版本一致。
+> 运行 `.pyc` **仍需要** Python 环境，**仍需要**安装相应的依赖（`colorlog`）。需注意，生产环境（班级电脑）的 Python 版本需要和在开发环境编译时所用的版本**一致**。
 
 ### 错误排查
 
