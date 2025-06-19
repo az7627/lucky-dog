@@ -1,0 +1,4 @@
+.venv
+.idea
+gui-zh.pyc
+__pycache__
