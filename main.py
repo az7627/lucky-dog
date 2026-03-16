@@ -4,7 +4,7 @@ import tkinter
 import tkinter.messagebox
 from os import name as os_name
 from os import getcwd
-from random import choices
+from random import choices, choice
 import json
 from fractions import Fraction
 import logging
@@ -59,7 +59,7 @@ except FileNotFoundError:
     tkinter.messagebox.showerror("错误", """未找到 names.json !
 请检查程序所在的目录下是否有一个名为“names.json”的文件，然后再尝试运行一次。
 如果您正在使用终端，请 cd 到此程序所在的目录。""")
-    mainWindow.destroy()  # 关闭窗口
+    mainWindow.destroy()
     exit(1)
 except PermissionError:
     logging.error("""无法打开 names.json !
@@ -83,21 +83,47 @@ except OSError:
 else:
     fontsize = 100
 
-    def random_pick():
-        """加权随机抽取一个名字，并将其权重减半"""
-        global label
+    def random_pick_with_animation():
+        """带简单动画的加权随机抽取，抽取后权重减半"""
         if not students:
             return
 
-        # 按权重随机选择
-        chosen = choices(students, weights=[s["weight"] for s in students], k=1)[0]
-        name = chosen["name"]
-        # 权重减半
-        chosen["weight"] *= Fraction(1, 2)
-        logging.info(f'抽到了 {name}，权重减半为 {chosen["weight"]}')
+        # 禁用抽取按钮，防止动画期间重复点击
+        pickup_button.config(state=tkinter.DISABLED)
 
-        # 更新显示
-        label.configure(text=name, font=('Sarasa Mono SC', fontsize))
+        # 提前确定最终选中的学生
+        chosen = choices(students, weights=[s['weight'] for s in students], k=1)[0]
+        final_name = chosen['name']
+
+        # 动画参数
+        steps = 10          # 变换次数
+        interval = 50       # 每次间隔（毫秒）
+        names_list = [s['name'] for s in students]  # 用于随机显示的名字池
+        step_count = 0
+
+        def animate():
+            nonlocal step_count
+            # 若主窗口已关闭，终止动画
+            if not mainWindow.winfo_exists():
+                return
+
+            if step_count < steps:
+                # 显示随机名字，颜色为灰色
+                random_name = choice(names_list)
+                label.config(text=random_name, fg="gray")
+                step_count += 1
+                mainWindow.after(interval, animate)
+            else:
+                # 动画结束，显示最终选中名字，颜色恢复为黑色
+                label.config(text=final_name, fg="black")
+                # 权重减半
+                chosen['weight'] *= Fraction(1, 2)
+                logging.info(f'抽到了 {final_name}，权重减半为 {chosen["weight"]}')
+                # 恢复按钮可用
+                pickup_button.config(state=tkinter.NORMAL)
+
+        # 启动动画
+        animate()
 
     def setFont():
         """打开字体设置子窗口"""
@@ -140,7 +166,8 @@ else:
     setfont_button.pack()
 
     pickup_button = tkinter.Button(mainWindow, text="选取名字",
-                                   font=('Sarasa Mono SC', 40), command=random_pick)
+                                   font=('Sarasa Mono SC', 40),
+                                   command=random_pick_with_animation)
     pickup_button.pack()
 
     label = tkinter.Label(mainWindow, text="", font=(None, fontsize))
