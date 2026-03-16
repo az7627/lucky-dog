@@ -1,5 +1,14 @@
 [
-    {"name": "张三", "weight": 1},
-    {"name": "李四", "weight": 2},
-    {"name": "王五", "weight": 1.5}
+    {
+        "name": "张三",
+        "weight": 1.0
+    },
+    {
+        "name": "李四",
+        "weight": 1.5
+    },
+    {
+        "name": "王五",
+        "weight": 2.0
+    }
 ]
