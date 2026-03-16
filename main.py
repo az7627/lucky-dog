@@ -51,11 +51,13 @@ except OSError :
     tkinter.messagebox.showerror("错误", "操作系统错误发生。")
 else :
     with open('./names.txt', "rb") as lis :
+        '''
         if hashlib.sha256(lis.read()).hexdigest() != TOGGLE_NAME_LIST_HASH:
             logging.error('你不准继续！')
             logging.error('我猜有人想把自己的名字从名单里删掉。\n没想到吧，我加了校验\n所以，你不准继续抽号。')
             tkinter.messagebox.showinfo("你不准继续", "我猜有人想把自己的名字从名单里删掉。\n没想到吧，我做了校验。\n所以，你不准继续抽号，快把名单改回去（（（")
             raise Exception
+        '''
     fontsize = 100
 
     def random() :
