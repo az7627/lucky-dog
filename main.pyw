@@ -40,7 +40,7 @@ DEFAULT_CONFIG = {
 }
 
 # ========== 防篡改开关（硬编码） ==========
-LOCK_NAMES = True   # True: 名单配置在 GUI 中不可编辑；False: 可编辑
+LOCK_NAMES = False   # True: 名单配置在 GUI 中不可编辑；False: 可编辑
 LOCK_CONFIG = False  # True: 程序设置在 GUI 中不可编辑；False: 可编辑
 # ========================================
 
