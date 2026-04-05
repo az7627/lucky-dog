@@ -6,29 +6,42 @@ import json
 from fractions import Fraction
 from random import choices, choice
 import logging
-import colorlog
 from os import name as os_name, getcwd
+
+# 尝试导入 colorlog，失败则使用普通 logging
+try:
+    import colorlog
+    COLORLOG_AVAILABLE = True
+except ImportError:
+    COLORLOG_AVAILABLE = False
+    logging.warning("未安装 colorlog 库，将使用单色日志。可通过 'pip install colorlog' 安装彩色日志。")
+
+# 配置日志（根据是否可用选择彩色或单色）
+if COLORLOG_AVAILABLE:
+    colorlog.basicConfig(
+        format='%(log_color)s[%(asctime)s %(levelname)s]\t %(message)s',
+        level=logging.DEBUG,
+        log_colors={
+            'DEBUG': 'green',
+            'INFO': 'cyan',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+            'CRITICAL': 'red,bg_white',
+        }
+    )
+else:
+    logging.basicConfig(
+        format='[%(asctime)s %(levelname)s]\t %(message)s',
+        level=logging.DEBUG
+    )
 
 # 尝试导入 Sun Valley 主题
 try:
     import sv_ttk
     SV_TTK_AVAILABLE = True
 except ImportError:
-    SV_TTK_AVAILABLE = True
+    SV_TTK_AVAILABLE = False
     logging.warning("未安装 sv-ttk 主题库，将使用默认主题。可通过 'pip install sv-ttk' 安装以获得现代化外观。")
-
-# 配置彩色日志
-colorlog.basicConfig(
-    format='%(log_color)s[%(asctime)s %(levelname)s]\t %(message)s',
-    level=logging.DEBUG,
-    log_colors={
-        'DEBUG': 'green',
-        'INFO': 'cyan',
-        'WARNING': 'yellow',
-        'ERROR': 'red',
-        'CRITICAL': 'red,bg_white',
-    }
-)
 
 # 默认配置
 DEFAULT_CONFIG = {
@@ -296,7 +309,7 @@ def open_options():
 
     # 如果设置被锁定，在顶部添加浅红色横幅
     if LOCK_CONFIG:
-        lock_label = tk.Label(frame_list, text="🔒 配置文件已被锁定", 
+        lock_label = tk.Label(frame_settings, text="🔒 配置文件已被锁定", 
                             bg="#FFCCCC", fg="#8B0000",  # 浅红背景，深红文字
                             font=('', 10, 'bold'), relief='ridge', padx=5, pady=3)
         lock_label.pack(fill=tk.X, pady=(0, 5))
