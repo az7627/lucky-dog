@@ -2,94 +2,118 @@
 
 *forked from [GitHub Gist / cheny0y0 / random-pickup](https://gist.github.com/cheny0y0/27017ff4c86131e3f8df04b65d9752a3)*
 
-Language: *Simplified Chinese / [English (US)](./README_en_US.md)*
-
-*Translation may not be 100% accurate.*
+Language: *[简体中文](./README.md) / English (US)*
 
 ***
 
-### Overview  
-This is a random name picker software designed for classroom all-in-one PCs, allowing teachers to randomly select students. It displays actual names instead of numbers and features tamper-proof functionality.
+### Overview
 
-### Usage Instructions  
+This is a random name picker software designed for classroom all-in-one PCs, allowing teachers to randomly select students. The new version supports **weights** (adjustable probability), **animation effects**, **font/theme customization**, and provides a graphical interface for name list and configuration management. It also retains **tamper-proof** features (locking lists/configurations via hard-coded switches, then compiling for distribution).
 
-0. Set up a Python environment and install the `colorlog` package.  
+### How to Use
 
-> [!TIP]  
-> Python 3.9.x and later no longer support Windows 7. For Windows 7 systems, install Python 3.8.x.  
-> To install the `colorlog` package, use:  
-> ```
-> pip install colorlog
-> ```  
-> If downloads are slow:  
+0. Set up the Python environment and install required dependencies.
+
+> [!TIP]
 > 
-> • For users in China:  
->   ```
->   pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
->   ```  
->   Or for one-time use:  
->   ```
->   pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple colorlog
->   ```
+> Python 3.9.x or higher no longer supports Windows 7. On Windows 7, please install Python 3.8.x.
+> 
+> Optional dependencies:
+> - `colorlog` (colored logging)
+> - `sv_ttk` (Sun Valley modern theme)
+> 
+> Installation command:
+> ```
+> pip install colorlog sv_ttk
+> ```
+> 
+> If download is too slow (especially for users in China), you can configure the Tsinghua mirror:
+> ```
+> pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+> ```
+> Or use temporarily:
+> ```
+> pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple colorlog sv_ttk
+> ```
 
-1. Replace `names.txt` with your class roster, with one name per line.  
+1. Prepare the name list.
 
-> [!TIP]  
-> If you have a spreadsheet (.xlsx, .xls, etc.) with one name per row:  
-> - Open it in Excel, select all names, copy them, and paste into `names.txt`—it will automatically format to one name per line.  
+Use `names.json` to store names and weights in the following format:
+```json
+[
+    {"name": "Zhang San", "weight": 1.0},
+    {"name": "Li Si", "weight": 1.5},
+    {"name": "Wang Wu", "weight": 2.0}
+]
+```
+- `name`: Student name.
+- `weight`: Selection weight. Higher values increase the chance of being picked. Each time a student is selected, their weight is automatically **halved** (a "cool-down" effect to prevent the same person from being picked repeatedly).
 
-2. Run `get_name_list_hash.py`. Follow prompts to get the roster’s hash value and replace the `TOGGLE_NAME_LIST_HASH` constant in `gui-zh.py`. The script’s output resembles:  
+> [!TIP]
+> 
+> If you have a `names.txt` file with one name per line, you can use the included tool `convert_names.py` for one-click conversion:
+> - Run `convert_names.py`
+> - Select the `.txt` file
+> - The program will automatically count duplicates, convert them to weights, and generate `names.json`
+> 
+> Alternatively, you can add/delete/modify entries directly through the "Options → Name List Management" interface.
 
-   ```
-   Calculated hash: 1017e1cc7f415846e2a764733e2c7bcfdfa2f5e2074b82e951a80ea15959c541  
-   Update hash in gui-zh.py? [Y/n]  
-   Successfully updated hash in gui-zh.py.  
-   Compile gui-zh.py? [Y/n]      
-   Compilation successful. Generated gui-zh.pyc.  
-   Delete source file gui-zh.py? [y/N]  
-   ```  
+2. Configure program parameters (optional).
 
-> [!NOTE]  
-> |Input|[Y/n]|[y/N]|  
-> |-|-|-|  
-> |Y|Yes|Yes|  
-> ||Yes|No|  
-> |N|No|No|  
+The program reads `config.json` on startup. Default content:
+```json
+{
+    "font_family": "Sarasa UI SC",
+    "font_size": 100,
+    "animation_enabled": true,
+    "animation_steps": 10,
+    "animation_interval": 30
+}
+```
+- `font_family`: Font used to display the selected name (must be installed on the system).
+- `font_size`: Font size.
+- `animation_enabled`: Whether to enable animation (fast scrolling of names during selection).
+- `animation_steps`: Number of animation scroll steps.
+- `animation_interval`: Interval between steps (milliseconds).
 
-> [!TIP]  
-> **If the script fails**, manually generate and replace the hash:  
-> In Python terminal, run:  
-> ```python  
-> import hashlib  
-> with open('./names.txt', "rb") as lis:  
->     print(hashlib.sha256(lis.read()).hexdigest())  
-> ```  
-> Output example:  
-> ```  
-> 1017e1cc7f415846e2a764733e2c7bcfdfa2f5e2074b82e951a80ea15959c541  
-> ```  
-> Manually replace `TOGGLE_NAME_LIST_HASH` in `gui-zh.py` (line 12) with this value.  
-> Then compile:  
-> ```  
-> python -m py_compile gui-zh.py  
-> ```  
+You can modify these parameters at any time by clicking the **Options...** button in the program interface, then the "Program Settings" tab. Changes are saved automatically.
 
-3. For classroom use, **do not** leave the source `gui-zh.py` on the classroom PC (prevents tampering). Only keep `gui-zh.pyc`. Run the compiled `gui-zh.pyc` file.  
+3. Run the program.
 
-> [!TIP]  
-> Running `.pyc` requires Python and `colorlog`. Ensure the classroom PC’s Python version **matches the compilation environment’s version**.  
+Double-click `main.pyw` (or run `python main.pyw`) to launch the main window. Click the **Pick Name** button to perform a random selection. The result will be displayed in large font in the center.
 
-### Troubleshooting  
+> [!NOTE]
+> 
+> To avoid certain students being selected too often or never due to luck, each time a student is picked, their weight is **halved** and saved to `names.json`. Over long-term use, all students' weights will gradually decrease, but the relative ratios remain the same (students with higher initial weights will still be more likely to be selected).
 
-| Error Message / Symptom | Solution |  
-|-|-|  
-| `names.txt` not found | Check if `names.txt` is misplaced/deleted. Move it to the same directory as `gui-zh.py` or create a new `names.txt`. |  
-| No permission to read `names.txt` | Adjust file permissions or run as administrator. |  
-| `gui-zh.py` not found | Ensure `gui-zh.py` is in the same directory as `get_name_list_hash.py`. Redownload if missing. |  
-| No permission to write `gui-zh.py` | Adjust permissions or run as administrator. |  
-| No permission to write compiled file | Adjust directory permissions or run as administrator. |  
-| No permission to delete `gui-zh.py` | Adjust permissions or run as administrator. |  
-| "Access denied" / "Someone tried to remove their name..." | Verify `TOGGLE_NAME_LIST_HASH` in `gui-zh.py` matches the SHA-256 of `names.txt`. If mismatched, correct the hash or roster. If using `gui-zh.pyc`, recompile after fixing. |  
-| Program freezes after clicking "Pick Name" or "Adjust Size" | Likely caused by text selection in the terminal window. Press <kbd>Esc</kbd> or right-click to deselect. For a permanent fix: <br> • **Windows 10/11**: Install Windows Terminal from Microsoft Store, then set it as default in *Settings > Privacy & security > For developers*. |  
+4. (Optional) Tamper-proof deployment.
 
-If your issue isn’t listed or remains unresolved, submit an Issue.  
+If you want to prevent students from modifying the name list or program configuration on the classroom computer, you can lock editing via hard-coded switches and then distribute the compiled `.pyc` file.
+
+- Open `main.pyw` and locate the two lines at the beginning:
+  ```python
+  LOCK_NAMES = False   # True: name list cannot be edited in GUI; False: editable
+  LOCK_CONFIG = False  # True: program settings cannot be edited in GUI; False: editable
+  ```
+- Change the switches you want to lock to `True` (e.g., `LOCK_NAMES = True` and `LOCK_CONFIG = True`).
+- Save the file, then compile:
+  ```
+  python -m py_compile main.pyw
+  ```
+  After compilation, a `__pycache__\main.cpython-XX.pyc` file will be generated (XX is the Python version number).
+- Copy the `.pyc` file to the classroom computer and run it (Python environment and installed dependencies are still required).
+
+> [!TIP]
+> 
+> After locking, the editing controls in the "Name List Management" and "Program Settings" tabs will be disabled, preventing students from modifying the name list or configuration through the graphical interface. However, directly editing `names.json` or `config.json` can still bypass the lock – for stronger tamper resistance, consider setting these two files to read-only and hidden, or using permission controls.
+
+### Troubleshooting
+
+| Error Message / Symptom | Solution |
+| - | - |
+| `names.json` file not found | Ensure `names.json` is in the same directory as the program. If not, follow step 1 to create the file. |
+| `config.json` file not found | The program will automatically use default configuration and generate the file. Usually no error. If permission issues occur, try running as administrator once. |
+| No permission to read/write JSON files | Check file permissions, or run the program with administrator privileges. |
+| Font displays as boxes after startup | The system lacks the configured font (e.g., "Sarasa UI SC"). Change to an installed font via "Options → Program Settings", or manually modify `font_family` in `config.json`. |
+
+If the above table does not solve your problem, or you cannot understand the content, please submit an Issue.
